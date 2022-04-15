@@ -1,0 +1,25 @@
+drop table if exists TotalAvgLosses
+
+create table TotalAvgLosses
+( Date_ date,
+Air int,
+Land int,
+Water int,
+total_personnel_losses int,
+total_eq_loss int)
+insert into TotalAvgLosses 
+
+create view TotalAvgLosses as
+select eq.date, eq.day,cast (aircraft+helicopter+drone as int)/eq.day as Air, 
+cast(tank+field_artillery+military_auto as int)/eq.day as Land,
+cast(naval_ship as int)/eq.day as Water, 
+cast(personnel as int)/eq.day as total_personnel_losses,
+cast(aircraft+helicopter+drone+tank+field_artillery+military_auto+naval_ship as int)/eq.day as total_eq_loss
+from `tidal-eon-347219.losses.losses_equipment` as eq
+full join `tidal-eon-347219.losses.losses_personnel` as ps 
+   on eq.day = ps.day
+where eq.day is not null
+and ps.day is not null
+order by total_personnel_losses desc
+
+
